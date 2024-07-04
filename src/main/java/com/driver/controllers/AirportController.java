@@ -1,28 +1,38 @@
 package com.driver.controllers;
 
 
+import com.driver.Service.AirportService;
+import com.driver.Service.BookingService;
+import com.driver.Service.FlightService;
+import com.driver.Service.PassengerService;
 import com.driver.model.Airport;
 import com.driver.model.City;
 import com.driver.model.Flight;
 import com.driver.model.Passenger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 @RestController
 public class AirportController {
+
+    @Autowired
+    PassengerService passengerService;
+
+    @Autowired
+    FlightService flightService;
+
+    @Autowired
+    AirportService airportService;
+
+    @Autowired
+    BookingService bookingService;
+
     @PostMapping("/add_airport")
     public String addAirport(@RequestBody Airport airport){
 
-        //Simply add airport details to your database
-        //Return a String message "SUCCESS"
-
-        return "SUCCESS";
+       return airportService.addAirport(airport);
     }
 
     @GetMapping("/get-largest-aiport")
@@ -30,8 +40,7 @@ public class AirportController {
 
         //Largest airport is in terms of terminals. 3 terminal airport is larger than 2 terminal airport
         //Incase of a tie return the Lexicographically smallest airportName
-
-       return null;
+        return airportService.getLargestAirportByName();
     }
 
     @GetMapping("/get-shortest-time-travel-between-cities")
@@ -44,7 +53,7 @@ public class AirportController {
     }
 
     @GetMapping("/get-number-of-people-on-airport-on/{date}")
-    public int getNumberOfPeopleOn(@PathVariable("date") Date date,@RequestParam("airportName")String airportName){
+    public int getNumberOfPeopleOn(@PathVariable("date") Date date, @RequestParam("airportName")String airportName){
 
         //Calculate the total number of people who have flights on that day on a particular airport
         //This includes both the people who have come for a flight and who have landed on an airport after their flight
@@ -66,14 +75,13 @@ public class AirportController {
 
 
     @PostMapping("/book-a-ticket")
-    public String bookATicket(@RequestParam("flightId")Integer flightId,@RequestParam("passengerId")Integer passengerId){
+    public String bookATicket(@RequestParam("flightId")Integer flightId, @RequestParam("passengerId")Integer passengerId){
 
+        return bookingService.bookATicket( flightId, passengerId );
         //If the numberOfPassengers who have booked the flight is greater than : maxCapacity, in that case :
         //return a String "FAILURE"
         //Also if the passenger has already booked a flight then also return "FAILURE".
         //else if you are able to book a ticket then return "SUCCESS"
-
-        return null;
     }
 
     @PutMapping("/cancel-a-ticket")
@@ -83,8 +91,7 @@ public class AirportController {
         // then return a "FAILURE" message
         // Otherwise return a "SUCCESS" message
         // and also cancel the ticket that passenger had booked earlier on the given flightId
-
-       return null;
+        return bookingService.cancelATicket( flightId, passengerId );
     }
 
 
@@ -99,7 +106,7 @@ public class AirportController {
     public String addFlight(@RequestBody Flight flight){
 
         //Return a "SUCCESS" message string after adding a flight.
-       return null;
+       return  flightService.addFlight( flight );
     }
 
 
@@ -130,9 +137,6 @@ public class AirportController {
 
         //Add a passenger to the database
         //And return a "SUCCESS" message if the passenger has been added successfully.
-
-       return null;
+        return passengerService.addPassenger(passenger);
     }
-
-
 }
